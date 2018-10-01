@@ -1,84 +1,74 @@
-import sys
-import random
-from flask import Flask, render_template, jsonify
-from flask_sqlalchemy import SQLAlchemy
+# -*- coding: utf-8 -*-
+
+import pandas as pd
+from shapely.geometry import Point, shape
+
+from flask import Flask
+from flask import render_template
+import json
+
+import geopandas as gpd
+
+
+data_path = './input/'
+n_samples = 30000
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
-db = SQLAlchemy(app)
-
-BASECOORDS = [-13.9626, 33.7741]
-
-class Point(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    latitude_off = db.Column(db.Float)
-    longitude_off = db.Column(db.Float)
-    district_id = db.Column(db.Integer, db.ForeignKey('district.id'))
-    district = db.relationship("District")
-
-    def __init__(self, id, district, lat, lng):
-        self.id = id
-        self.district = district
-        self.latitude_off = lat
-        self.longitude_off = lng
-
-    def __repr__(self):
-        return "<Point %d: Lat %s Lng %s>" % (self.id, self.latitude_off, self.longitude_off)
-
-    @property
-    def latitude(self):
-        return self.latitude_off + self.district.latitude
-
-    @property
-    def longitude(self):
-        return self.longitude_off + self.district.longitude
-
-
-class District(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    latitude = db.Column(db.Float)
-    longitude = db.Column(db.Float)
-
-    def __init__(self, id, name, lat, lng):
-        self.id = id
-        self.name = name
-        self.latitude = lat
-        self.longitude = lng
-
-
-@app.route('/')
+@app.route("/")
 def index():
-    districts = District.query.all()
-    return render_template('index.html', districts=districts)
+    return render_template("index.html")
+
+@app.route("/data")
+def get_data():
+    df = pd.read_csv(data_path + 'filt_mat.csv')
+
+    df_clean = df[['daytime_density', 'daytime_pop', 'medinc', 'hs', 'phd', 'oldpop', 'youngpop', 'brewery', 'zone']]
+
+    return df_clean.to_json()
+
+@app.route("/zips")
+def get_zips():
+
+    states = gpd.read_file('./input/zips.geojson')
+    return states.to_json()
+
+@app.route("/census")
+def get_census():
+
+    states = gpd.read_file('./input/census.geojson')
+    return states.to_json()
+
+@app.route("/neighborhood")
+def get_hood():
+
+    states = gpd.read_file('./input/neighborhoods.geojson')
+    return states.to_json()
+
+@app.route("/zones")
+def get_zones():
+
+    states = gpd.read_file('./input/zones.geojson')
+    return states.to_json()
+
+@app.route("/grid")
+def get_grid():
+
+    states = gpd.read_file('./input/grid.geojson')
+    return states.to_json()
 
 
-@app.route('/district/<int:district_id>')
-def district(district_id):
-    points = Point.query.filter_by(district_id=district_id).all()
-    coords = [[point.latitude, point.longitude] for point in points]
-    return jsonify({"data": coords})
+@app.route("/pred")
+def get_grid():
 
+    census = gpd.read_file('./input/grid.geojson')
+    
+    all_df = pd.read_csv('./input/raw_combined.csv')
+    all_df['GEOID'] = all_df['cen_code']
+    
+    gdf = pd.merge(census, all_df, how='left', left_index=True, right_index=True)
+    
+    return census.to_json()
 
-def make_random_data(db):
-    NDISTRICTS = 5
-    NPOINTS = 10
-    for did in range(NDISTRICTS):
-        district = District(did, "District %d" % did, BASECOORDS[0], BASECOORDS[1])
-        db.session.add(district)
-        for pid in range(NPOINTS):
-            lat = random.random() - 0.5
-            lng = random.random() - 0.5
-            row = Point(pid + NPOINTS * did, district, lat, lng)
-            db.session.add(row)
-    db.session.commit()
-
-
-if __name__ == '__main__':
-    if len(sys.argv) > 1:
-        if sys.argv[1] == 'mkdb':
-            db.create_all()
-            make_random_data(db)
-    else:
-        app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0',port=5000,debug=True)
