@@ -222,57 +222,6 @@ function renderData(shape, param) {
 		    });
 		 }
 
-		 var myarr1 = ['pred_p', 'pred_6mo', 'pred_1yr', 'pred_2yr'];
-
-		if (['pred_p', 'pred_6mo', 'pred_1yr', 'pred_2yr'].indexOf(param) >= 0) {
-				    layer = L.geoJson( hoodData, {
-				      style: function(feature){
-				        var fillColor,
-				           phd = eval("feature.properties." + param);
-				           scale = Math.max(phd);
-					        if ( phd > 4  ) fillColor = "#006837";
-					        else if ( phd > 3 ) fillColor = "#31a354";
-					        else if ( phd > 2 ) fillColor = "#78c679";
-					        else if ( phd> 1 ) fillColor = "#c2e699";
-					        else if ( phd > 0 ) fillColor = "#ffffcc";
-					        else fillColor = "#f7f7f7";  // no data
-					        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
-					      },
-				      onEachFeature: function( feature, layer ){
-				        layer.bindPopup(param + ": " + Math.round(eval("feature.properties." + param)))
-				      }
-				    });
-				 }
-
-
-
-		var myarr2 = ['change', 'change_p', 'change_6mo', 'change_1yr', 'change_2yr'];
-
-		if (myarr2.indexOf(param) > -1) {
-				    layer = L.geoJson( hoodData, {
-				      style: function(feature){
-				        var fillColor,
-				           phd = eval("feature.properties." + param);
-				           scale = Math.max(phd);
-					        if ( phd > 4  ) fillColor = "#8c510a";
-					        else if ( phd > 2 ) fillColor = "#d8b365";
-					        else if ( phd > 0 ) fillColor = "#f6e8c3";
-					        else if ( phd > -2 ) fillColor = "#c7eae5";
-					        else if ( phd > -4 ) fillColor = "#5ab4ac";
-					        else fillColor = "#01665e";  // no data
-					        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
-					      },
-				      onEachFeature: function( feature, layer ){
-				      	
-				        layer.bindPopup(param + ": " + Math.round(eval("feature.properties." + param)) + feature.properties.hood)
-
-						}
-
-
-				    });
-				 }
-
-
 	    map.addLayer(layer);
 
   	});
@@ -284,26 +233,18 @@ function onMapClick(e) {
                 'lng': e.latlng.lng}
     console.log(e.latlng)
     console.log(JSON.stringify(data))
-    $.ajax({
-    type: 'POST',
-    contentType:"application/json",
-    data: JSON.stringify(data), 
-    dataType:'json',
-    url: '/mini_win' // converts js value to JSON string
-    });
+	    $.ajax({
+	    type: 'POST',
+	    contentType:"application/json",
+	    data: JSON.stringify(data), 
+	    dataType:'json',
+	    url: '/mini_win' // converts js value to JSON string
+	    });
 }
 
+
 $(function(){
-    var form = $('form');
-    $('#myRange').on('change mouseup', function(){
-        $.ajax({
-            type: "POST",
-            url: form.action,
-            data: form.serialize(),
-        }).done(function(res){
-            //do something with the response from the server
-        });
-    });
+
 });
 
 $(function() {	
@@ -319,13 +260,84 @@ $(function() {
         var val2 = $('#type_class option:selected').val();
         renderData(val1, val2);
     });
-    $('#myRange').mouseup(function() {
-        var val1 = $('#zone_class option:selected').val();
-        var val2 = $('#type_class option:selected').val();
-        renderData(val1, val2);
-    });
 	map.on('click', onMapClick);
+	var form = $('form');
+	
+    $('#type_class').change(function() {
+    val2 = $('#type_class option:selected').val();
+	})
 
+    $('#myRange').on('mouseup', function(){
+		console.log(val2)
+		if (val2 == 'cafe_model') {
+
+		console.log(val2)
+        $.ajax({
+            type: "POST",
+            url: './Neighborhoods',
+            data: form.serialize(),
+            dataType: 'json',
+            success: function(response) {			
+			    	if (layer != undefined) {
+			              map.removeLayer(layer);
+			        };
+
+					    layer = L.geoJson(response, {
+					      style: function(feature){
+					        var fillColor,
+					           phd = eval("feature.properties.cafe_model");
+					           scale = Math.max(phd);
+						        if ( phd > 15  ) fillColor = "#006837";
+						        else if ( phd > 10 ) fillColor = "#31a354";
+						        else if ( phd > 6 ) fillColor = "#78c679";
+						        else if ( phd > 3 ) fillColor = "#c2e699";
+						        else if ( phd > 0 ) fillColor = "#ffffcc";
+						        else fillColor = "#f7f7f7";  // no data
+						        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
+						      },
+					      onEachFeature: function( feature, layer ){
+							        layer.bindPopup("Cafes: " + Math.round(eval("feature.properties.cafe_model")))
+							      }
+					    });
+
+	    			map.addLayer(layer);
+					 }
+			})
+    	};
+		if (val2 == 'change') {
+		    $.ajax({
+	            type: "POST",
+	            url: './Neighborhoods',
+	            data: form.serialize(),
+	            dataType: 'json',
+	            success: function(response) {			
+				    	if (layer != undefined) {
+				              map.removeLayer(layer);
+				        };
+					    layer = L.geoJson(response, {
+					      style: function(feature){
+					        var fillColor,
+					           phd = eval("feature.properties.change");
+					           scale = Math.max(phd);
+						        if ( phd > 4  ) fillColor = "#8c510a";
+						        else if ( phd > 2 ) fillColor = "#d8b365";
+						        else if ( phd > 0 ) fillColor = "#f6e8c3";
+						        else if ( phd > -2 ) fillColor = "#c7eae5";
+						        else if ( phd > -4 ) fillColor = "#5ab4ac";
+						        else fillColor = "#01665e";  // no data
+						        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
+						      },
+					      onEachFeature: function( feature, layer ){
+							        layer.bindPopup("Change in cafes: " + Math.round(eval("feature.properties.change")))
+							      }
+					    });
+
+	    			map.addLayer(layer);
+					 }
+	    })
+
+    };
+    });
 })
 
 

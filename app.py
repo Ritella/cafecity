@@ -31,7 +31,7 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'], )
 def index():
     zone_class = ['Neighborhoods', 'Zips', 'Census', 'Zones', 'Grid']
-    type_class = ['cafe', 'change', 'daytime_density', 'daytime_pop', 'medinc', 
+    type_class = ['cafe', 'cafe_model', 'change', 'daytime_density', 'daytime_pop', 'medinc', 
     'hs', 'phd', 'oldpop', 'youngpop', 'brewery_sum', 'cafe_sum']
 
     return render_template("index.html", zone_class  = zone_class, type_class  = type_class)
@@ -78,11 +78,8 @@ def get_census():
 @app.route("/Neighborhoods", methods=['GET', 'POST'])
 def get_hood():
 
-    if ('time' in request.form and int(request.form['time']) != 0):
-        session['time'] = request.form['time']
-        session['ed'] = request.form['ed']
-        session['inc'] = request.form['inc']
-        session['pop'] = request.form['pop']
+    print(request.form)
+
     all_df = pd.read_csv('./input/raw_combined.csv')
     fil = all_df
 
@@ -125,13 +122,13 @@ def get_hood():
     fil['dist2'] = 0
     fil['dist3'] = 0
 
-    if ('time' in session and int(session['time']) != 0):
+    if ('time' in request.form):
         print('Predicting...')
-        time_up = float(session['time'])/12
+        time_up = float(request.form['time'])/12
 
-        pop_up = 1 + float(session['pop']) * time_up * .01
-        inc_up = 1 + float(session['inc']) * time_up * .01
-        ed_up = 1 + float(session['ed']) * time_up * .01
+        pop_up = 1 + float(request.form['pop']) * time_up * .01
+        inc_up = 1 + float(request.form['inc']) * time_up * .01
+        ed_up = 1 + float(request.form['ed']) * time_up * .01
 
         fil['daytime_density'] = fil['daytime_density'] * pop_up
         fil['daytime_pop'] = fil['daytime_pop'] * pop_up
@@ -194,7 +191,7 @@ def get_hood():
         'oldpop':fil.groupby('hood')['oldpop'].mean(),
         'youngpop':fil.groupby('hood')['youngpop'].mean(),
         'brewery':fil.groupby('hood')['brewery'].sum(),
-        'cafe':fil.groupby('hood')['cafe'].sum(),
+        'cafe_model':fil.groupby('hood')['cafe'].sum(),
         'change':fil.groupby('hood')['change'].sum()
         })
 
@@ -211,6 +208,7 @@ def get_hood():
         'cafe':all_df.groupby('hood')['cafe'].sum()
         })
 
+    print(all_df.head())
     all_df['hood'] = list(all_df.index)
     del all_df.index.name
 
@@ -219,6 +217,8 @@ def get_hood():
 
     census['hood'] = census['S_HOOD'].astype(str)
     gdf = census.merge(all_df, how='left', on='hood')
+
+    print(gdf)
 
     return gdf.to_json()
 
