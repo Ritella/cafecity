@@ -188,10 +188,10 @@ function renderData(shape, param) {
 		        var fillColor,
 		           phd = eval("feature.properties." + param);
 		           scale = Math.max(phd);
-			        if ( phd > 4  ) fillColor = "#006837";
-			        else if ( phd > 3 ) fillColor = "#31a354";
-			        else if ( phd > 2 ) fillColor = "#78c679";
-			        else if ( phd> 1 ) fillColor = "#c2e699";
+			        if ( phd > 15  ) fillColor = "#006837";
+			        else if ( phd > 10 ) fillColor = "#31a354";
+			        else if ( phd > 6 ) fillColor = "#78c679";
+			        else if ( phd > 3 ) fillColor = "#c2e699";
 			        else if ( phd > 0 ) fillColor = "#ffffcc";
 			        else fillColor = "#f7f7f7";  // no data
 			        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
@@ -246,7 +246,7 @@ function renderData(shape, param) {
 
 
 
-		var myarr2 = ['change_p', 'change_6mo', 'change_1yr', 'change_2yr'];
+		var myarr2 = ['change', 'change_p', 'change_6mo', 'change_1yr', 'change_2yr'];
 
 		if (myarr2.indexOf(param) > -1) {
 				    layer = L.geoJson( hoodData, {
@@ -256,7 +256,7 @@ function renderData(shape, param) {
 				           scale = Math.max(phd);
 					        if ( phd > 4  ) fillColor = "#8c510a";
 					        else if ( phd > 2 ) fillColor = "#d8b365";
-					        else if ( phd > -1 ) fillColor = "#f6e8c3";
+					        else if ( phd > 0 ) fillColor = "#f6e8c3";
 					        else if ( phd > -2 ) fillColor = "#c7eae5";
 					        else if ( phd > -4 ) fillColor = "#5ab4ac";
 					        else fillColor = "#01665e";  // no data
@@ -293,10 +293,22 @@ function onMapClick(e) {
     });
 }
 
+$(function(){
+    var form = $('form');
+    $('#myRange').on('change mouseup', function(){
+        $.ajax({
+            type: "POST",
+            url: form.action,
+            data: form.serialize(),
+        }).done(function(res){
+            //do something with the response from the server
+        });
+    });
+});
 
 $(function() {	
     drawMap();
-    renderData('Zips','phd')
+    renderData('Neighborhoods','cafe')
     $('#zone_class').change(function() {
         var val1 = $('#zone_class option:selected').val();
         var val2 = $('#type_class option:selected').val();
@@ -307,7 +319,14 @@ $(function() {
         var val2 = $('#type_class option:selected').val();
         renderData(val1, val2);
     });
-
+    $('#myRange').mouseup(function() {
+        var val1 = $('#zone_class option:selected').val();
+        var val2 = $('#type_class option:selected').val();
+        renderData(val1, val2);
+    });
 	map.on('click', onMapClick);
 
 })
+
+
+
