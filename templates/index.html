@@ -51,7 +51,7 @@
       $('#myRange').on('mouseup', function(){
           $.ajax({
               type: "POST",
-              url: '/Neighborhoods',
+              url: './Neighborhoods',
               data: form.serialize(),
           }).done(function(res){
               //do something with the response from the server
