@@ -22,7 +22,7 @@ import pickle
 
 import operator
 
-data_path = './input/'
+#data_path = './input/'
 n_samples = 30000
 
 app = Flask(__name__)
