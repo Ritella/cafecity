@@ -45,20 +45,6 @@
   $("#ex5").bootstrapSlider();
 </script>
 
-<script>
-  $(function(){
-      var form = $('form');
-      $('#myRange').on('mouseup', function(){
-          $.ajax({
-              type: "POST",
-              url: './Neighborhoods',
-              data: form.serialize(),
-          }).done(function(res){
-              //do something with the response from the server
-          });
-      });
-  });
-</script>
 
 
 </head>
