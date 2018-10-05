@@ -319,16 +319,19 @@ $(function() {
 					        var fillColor,
 					           phd = eval("feature.properties.change");
 					           scale = Math.max(phd);
-						        if ( phd > 4  ) fillColor = "#8c510a";
-						        else if ( phd > 2 ) fillColor = "#d8b365";
-						        else if ( phd > 0 ) fillColor = "#f6e8c3";
-						        else if ( phd > -2 ) fillColor = "#c7eae5";
-						        else if ( phd > -4 ) fillColor = "#5ab4ac";
-						        else fillColor = "#01665e";  // no data
+						        if ( phd > 15  ) fillColor = "#7f3b08";
+						        else if ( phd > 7 ) fillColor = "#b35806";
+						        else if ( phd > 5 ) fillColor = "#e08214";
+						        else if ( phd > 2 ) fillColor = "#fdb863";
+						        else if ( phd > -1 ) fillColor = "#fee0b6";
+						        else if ( phd > -2 ) fillColor = "#f7f7f7";
+						        else if ( phd > -3 ) fillColor = "#d8daeb";
+						        else if ( phd > -7 ) fillColor = "#b2abd2";
+						        else fillColor = "#542788";  // no data
 						        return { color: "#999", weight: 1, fillColor: fillColor, fillOpacity: .6 };
 						      },
 					      onEachFeature: function( feature, layer ){
-							        layer.bindPopup("Change in cafes: " + Math.round(eval("feature.properties.change")))
+							        layer.bindPopup(feature.properties.hood + " - Change in cafes: " + Math.round(eval("feature.properties.change")))
 							      }
 					    });
 

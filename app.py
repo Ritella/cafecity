@@ -83,6 +83,8 @@ def get_hood():
     all_df = pd.read_csv('./input/raw_combined.csv')
     fil = all_df
 
+    fil['weights_p'] = fil['permits']/np.max(fil['permits'])
+
     filename = 'finalized_model.sav'
 
     with open(filename, 'rb') as file:  
@@ -126,22 +128,22 @@ def get_hood():
         print('Predicting...')
         time_up = float(request.form['time'])/12
 
-        pop_up = 1 + float(request.form['pop']) * time_up * .01
-        inc_up = 1 + float(request.form['inc']) * time_up * .01
-        ed_up = 1 + float(request.form['ed']) * time_up * .01
+        pop_up = float(request.form['pop']) * time_up * .01
+        inc_up = float(request.form['inc']) * time_up * .01
+        ed_up = float(request.form['ed']) * time_up * .01
 
-        fil['daytime_density'] = fil['daytime_density'] * pop_up
-        fil['daytime_pop'] = fil['daytime_pop'] * pop_up
-        fil['medinc'] = fil['medinc'] * inc_up
-        fil['hs'] = fil['hs'] * ed_up
-        fil['phd'] = fil['phd'] * ed_up
-        fil['oldpop'] = fil['oldpop'] * pop_up
-        fil['youngpop'] = fil['youngpop'] * pop_up
-        fil['brewery'] = fil['brewery'] * ed_up
-        fil['medincXphd'] = fil['medinc'] * fil['phd'] * ed_up 
-        fil['medincXhs'] = fil['medinc'] * fil['hs'] * ed_up 
-        fil['medincXyoungpop'] = fil['medinc'] * fil['youngpop'] * pop_up 
-        fil['medincXoldpop'] = fil['medinc'] * fil['oldpop'] * pop_up 
+        fil['daytime_density'] = fil['daytime_density'] * (1 + pop_up*fil['weights_p'])
+        fil['daytime_pop'] = fil['daytime_pop'] * (1 + pop_up*fil['weights_p'])
+        fil['medinc'] = fil['medinc'] * (1 + inc_up)
+        fil['hs'] = fil['hs'] * (1 + ed_up)
+        fil['phd'] = fil['phd'] * (1 + ed_up)
+        fil['oldpop'] = fil['oldpop'] * (1 + pop_up*fil['weights_p'])
+        fil['youngpop'] = fil['youngpop'] * (1 + pop_up*fil['weights_p'])
+        fil['brewery'] = fil['brewery']
+        fil['medincXphd'] = fil['medinc'] * fil['phd'] 
+        fil['medincXhs'] = fil['medinc'] * fil['hs']
+        fil['medincXyoungpop'] = fil['medinc'] * fil['youngpop']
+        fil['medincXoldpop'] = fil['medinc'] * fil['oldpop']
 
         X = fil[['daytime_density', 'daytime_pop', 
          'medinc','hs', 
@@ -151,21 +153,36 @@ def get_hood():
          'dist2', 'dist3',
         'medincXphd', 'medincXhs', 
         'medincXyoungpop', 'medincXoldpop']].values
+        
+        print(np.argwhere(np.isnan(X)))
 
         fil['pred'] = pickle_model.predict(X)
 
-        for x in range(4):
-            fil = fil.fillna(0)
+        for x in range(6):
             grid[i,j] = fil['pred']
+            print(np.argwhere(np.isnan(grid)))
+            grid = np.nan_to_num(grid)
+            print(np.argwhere(np.isnan(grid)))
 
             grid1 = signal.convolve2d(grid, kernel_1, boundary='wrap', mode='same')
             grid2 = signal.convolve2d(grid, kernel_2, boundary='wrap', mode='same')
             grid3 = signal.convolve2d(grid, kernel_3, boundary='wrap', mode='same')
 
-            fil['dist1'] = grid1[i,j]
-            fil['dist2'] = grid2[i,j]
-            fil['dist3'] = grid3[i,j]
-            fil = fil.fillna(0)
+            print(np.argwhere(np.isnan(grid1)))
+            print(np.argwhere(np.isnan(grid2)))
+            print(np.argwhere(np.isnan(grid3)))
+
+            dist1 = grid1[i,j]
+            dist2 = grid2[i,j]
+            dist3 = grid3[i,j]
+
+            dist1[dist1 >= 15] = 15
+            dist2[dist2 >= 35] = 35
+            dist3[dist3 >= 50] = 50
+
+            fil['dist1'] = dist1
+            fil['dist2'] = dist2
+            fil['dist3'] = dist3
 
             X = fil[['daytime_density', 'daytime_pop', 
              'medinc','hs', 
