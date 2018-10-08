@@ -31,8 +31,9 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'], )
 def index():
     zone_class = ['Neighborhoods', 'Zips', 'Census', 'Zones', 'Grid']
-    type_class = ['cafe', 'cafe_model', 'change', 'daytime_density', 'daytime_pop', 'medinc', 
-    'hs', 'phd', 'oldpop', 'youngpop', 'brewery_sum', 'cafe_sum']
+    type_class = ['Number of cafes', 'Number of cafes predicted', 'Change in cafes from present', 'Daytime density',
+    'Daytime population', 'Median income', 'High school education', 'PhD education', 'Population above 65yo', 'Population below 25yo', 'Number of breweries', 
+    'Number of cafes alt']
 
     return render_template("index.html", zone_class  = zone_class, type_class  = type_class)
 
