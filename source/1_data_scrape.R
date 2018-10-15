@@ -1,16 +1,6 @@
 
 
 # API keys ----------------------------------------------------------------
-## Google API
-api_key = "AIzaSyDGl6tac2fOPsTWQoH9XW8PPBQmq6Q7z-s"
-
-## Yelp API
-client_id <- "0p4DVEveSSHzsiqhKirzsQ"
-client_secret <- "8gxSTust8jDITASyJHNHcmwXkjh_vMuWR0NhsYAhXLg308Ou6EwUH53WndVS-Xgwo-lttZ-g-iGcS4EGLLUzQmZqRg-YXSarHbwuI0lMbq_SWL3D9SSmHyIl0h-bW3Yx"
-
-## Quandl API
-Quandl.api_key("Ap8LkeEzQyys3dA6CspP")
-
 
 # Get samples from Seattle nhoods shapefile -------------------------------
 ## Might fail depending on RNG in spsample()
