@@ -4,7 +4,7 @@ Cafecity is a data aggregation, modeling, and forecasting tool for estimating hi
 
 ## Data sources
 
-Data are collected from several sources: 
+Data for the Seattle implementation are collected from several sources: 
 
 1. The United States Census Bureau, from `https://lehd.ces.census.gov/data/` and `https://www.census.gov/geo/maps-data/data/tiger-geodatabases.html`, for tract shapes, demographic and employment information
 
