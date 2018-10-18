@@ -9,6 +9,7 @@ Underlying tech:
 2. R (rgdal, dplyr, magrittr, reshape2, raster, Quandl, rgeos, tidyverse, httr, tidyr, geosphere)
 3. Javascript (Leaflet, D3, DC, JQuery, Keen, Queue, Crossfilter, Underscore)
 4. HTML/CSS (Bootstrap, Keen)
+5. Nginx/Gunicorn (on AWS server)
 
 ## Data sources
 
@@ -41,3 +42,11 @@ Data for the Seattle implementation are collected from several sources:
 ## Underlying model
 
 The model fit to this data is a generalized additive model with smoothing splines, described by `Y ~ Pois(lambda)` and `log(lambda) ~ β + f.(X)`, the usual GAM structure with a series of splines and a tensor product smooth for the autocorrelation features. 
+
+## File structure
+
+1. `input/` - raw and processed data, excluded from git repo for size and permissions issues
+2. `static/` - frontend custom and generic css/js libraries
+3. `source/` - underlying data process files (unused in server-side activities)
+4. `app.py`, `templates/`, `tables.py` - Flask server files
+5. `finalized_model.sav` - fitted GAM modelfile
