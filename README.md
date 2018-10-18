@@ -7,7 +7,7 @@ Scraping and geospatial wrangling are handled in R, model fitting and geoJSON ge
 Underlying tech: 
 1. Python (pandas, shapely, flask, numpy, geopandas, pickle, pyGAM)
 2. R (rgdal, dplyr, magrittr, reshape2, raster, Quandl, rgeos, tidyverse, httr, tidyr, geosphere)
-3. Javascript (Leaflet, D3, DC, JQuery, Keen, Queue, Crossfilter, Underscore,
+3. Javascript (Leaflet, D3, DC, JQuery, Keen, Queue, Crossfilter, Underscore)
 4. HTML/CSS (Bootstrap, Keen)
 
 ## Data sources
@@ -32,10 +32,10 @@ Data for the Seattle implementation are collected from several sources:
 
 4. The modified model matrix is used to train a generalized additive model, using pyGAM's GridSearch algorithm to perform cross-validation and hyperparameter smoothing
 
-4a. The trained model is pickled to file
+5. The trained model is pickled to file
 
-5. Residual estimation and prediction is performed by first taking marginal predictions independent of autocorrelative features. After the first prediction instance, autocorrelation features are re-generation using the convolve method in step 3 and repeated until predictions stabilize (10 iterations is more than enough)
+6. Residual estimation and prediction is performed by first taking marginal predictions independent of autocorrelative features. After the first prediction instance, autocorrelation features are re-generation using the convolve method in step 3 and repeated until predictions stabilize (10 iterations is more than enough)
 
-5a. For forecasting, step 5 is conducted on an underlying forecast of city data. This is conducted via weighted assignment of growth rates based on building permit and real estate data, which takes Puget Sound Planning Authority growth rate estimates and distributes them across the city to plausible growth hotspots. Neighborhoods with stronger weights are transformed more per time period (month), and the converse is true. 
+7. For forecasting, step 6 is conducted on an underlying forecast of city data. This is conducted via weighted assignment of growth rates based on building permit and real estate data, which takes Puget Sound Planning Authority growth rate estimates and distributes them across the city to plausible growth hotspots. Neighborhoods with stronger weights are transformed more per time period (month), and the converse is true. 
 
 
