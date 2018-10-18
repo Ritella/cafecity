@@ -1,6 +1,6 @@
 # Cafecity
 
-Cafecity is a data aggregation, modeling, and forecasting tool for estimating high-growth areas for cafe-placement. The underlying model calibration and workflow is potentially extensible to any combination of businesses/locations/areas, but in this instance the specific application is on predicting the growth of coffee shops on a neighborhood-basis in the city of Seattle. 
+Cafecity is a data aggregation, modeling, and forecasting tool for estimating high-growth areas for cafe placement. The underlying model calibration and workflow is potentially extensible to any combination of businesses/locations/areas, but in this instance the specific application is on predicting the growth of coffee shops on a neighborhood-basis in the city of Seattle. 
 
 ## Data sources
 
