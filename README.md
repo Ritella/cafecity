@@ -22,7 +22,7 @@ Data for the Seattle implementation are collected from several sources:
 
 4. Google Places and Yelp API, from `https://developers.google.com/places/web-service/intro` and `https://www.yelp.com/developers`, for current locations of cafes and their characteristics (data are collated and transformed to raster counts before storage)
 
-## Data process
+## Data and model process
 
 1. APIs and shapefiles are pulled from sources listed above, combined, and rasterized into a coordinate-based model matrix for analysis
 
@@ -38,4 +38,6 @@ Data for the Seattle implementation are collected from several sources:
 
 7. For forecasting, step 6 is conducted on an underlying forecast of city data. This is conducted via weighted assignment of growth rates based on building permit and real estate data, which takes Puget Sound Planning Authority growth rate estimates and distributes them across the city to plausible growth hotspots. Neighborhoods with stronger weights are transformed more per time period (month), and the converse is true. 
 
+## Underlying model
 
+The model fit to this data is a generalized additive model with smoothing splines, described by `Y ~ Pois(lambda)` and `log(lambda) ~ β + f.(X)`, the usual GAM structure with a series of splines and a tensor product smooth for the autocorrelation features. 
