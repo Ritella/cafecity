@@ -43,6 +43,10 @@ Data for the Seattle implementation are collected from several sources:
 
 The model fit to this data is a generalized additive model with smoothing splines, described by `Y ~ Pois(lambda)` and `log(lambda) ~ β + f.(X)`, the usual GAM structure with a series of splines and a tensor product smooth for the autocorrelation features. 
 
+## Visualization and user input
+
+User input is processed through a python/Flask instance to produce predictions from the model object. Predictions are matched with user-specified shapes (census tract, neighborhood, etc) and piped to visualization libraries in Javascript (mostly Leaflet and DC/D3) for plotting. 
+
 ## File structure
 
 1. `input/` - raw and processed data, excluded from git repo for size and permissions issues
